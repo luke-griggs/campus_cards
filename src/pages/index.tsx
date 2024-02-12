@@ -1,11 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { FiLock } from "react-icons/fi"; // Importing lock icon from react-icons
 import "../styles/globals.css"; // Ensure this contains the necessary responsive utilities
+import { db } from '../../firebase.js';
 import { RiH5 } from "react-icons/ri";
+import { loadStripe } from '@stripe/stripe-js';
+import { addMessage } from '../../services/firestoreService.js'
+
 
 
 const Home: React.FC = () => {
+
+const [phoneNumber, setPhoneNumber] = useState('');
+const [message, setMessage] = useState('');
+
+const stripePromise = loadStripe('pk_test_51Og8qVGV5b2yzFdB8bLNWswkjM6gsZpxum7jzlTijbrUwzIIxsTDsLprB3VtUHCMHzghPgPiP9MHZQIp0nOcKtYs00Fdwr8LDn');
+
+const handleSubmit = async(e: React.FormEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Prevent the default form submission
+    if (!phoneNumber || !message) {
+      alert('Oh no! Please enter a valid phone number and message'); // Show alert if fields are empty
+    } else {
+      try {
+
+        const docId = await addMessage(phoneNumber, message);
+
+        const response = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ phoneNumber, message, docId}),
+        });
+
+        const session = await response.json();
+
+        // Redirect to Stripe Checkout
+        const stripe = await stripePromise;
+
+        if (stripe) {
+            await stripe.redirectToCheckout({ sessionId: session.id});
+        } else {
+            console.log('Stripe.js has not loaded yet.');
+        }
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error processing payment. Please try again.');
+        }
+    }
+  };
+
+
+
   return (
     <div className="bg-gradient-to-bl from-purple-400 to-blue-300 min-h-screen flex flex-col text-gray-800">
       <Navbar />
@@ -48,6 +95,8 @@ const Home: React.FC = () => {
                     name="recipient"
                     placeholder="Enter their phone number"
                     className="w-full px-4 py-2 border rounded-md text-gray-700 focus:ring focus:ring-indigo-300"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
                 <div>
@@ -63,14 +112,16 @@ const Home: React.FC = () => {
                     placeholder="Type your message"
                     className="w-full px-4 py-2 border rounded-md text-gray-700 focus:ring focus:ring-indigo-300"
                     rows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                   ></textarea>
                 </div>
                 <a
-                  href="https://buy.stripe.com/test_6oEaGU0ORcOoaXe3cc"
+                 /* href="https://buy.stripe.com/test_6oEaGU0ORcOoaXe3cc"*/
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <div className="w-full text-center bg-[#38b6ff] text-white px-4 py-3 mt-2 rounded-md hover:bg-blue-300 focus:outline-none focus:bg-indigo-700">
+                  <div onClick={handleSubmit}className="w-full text-center bg-[#38b6ff] text-white px-4 py-3 mt-2 rounded-md hover:bg-blue-300 focus:outline-none focus:bg-indigo-700">
                     Send Message
                   </div>
                 </a>
