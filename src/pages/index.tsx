@@ -6,6 +6,9 @@ import { db } from '../../firebase.js';
 import { RiH5 } from "react-icons/ri";
 import { loadStripe } from '@stripe/stripe-js';
 import { addMessage } from '../../services/firestoreService.js'
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
 
 
 
@@ -16,10 +19,10 @@ const [message, setMessage] = useState('');
 
 const stripePromise = loadStripe('pk_test_51Og8qVGV5b2yzFdB8bLNWswkjM6gsZpxum7jzlTijbrUwzIIxsTDsLprB3VtUHCMHzghPgPiP9MHZQIp0nOcKtYs00Fdwr8LDn');
 
-const handleSubmit = async(e: React.FormEvent<HTMLDivElement>) => {
-    e.preventDefault(); // Prevent the default form submission
+const handleSubmit = async(e: React.FormEvent<HTMLDivElement>) => { //payment
+    e.preventDefault(); 
     if (!phoneNumber || !message) {
-      alert('Oh no! Please enter a valid phone number and message'); // Show alert if fields are empty
+      alert('Oh no! Please enter a valid phone number and message');
     } else {
       try {
 
@@ -43,12 +46,12 @@ const handleSubmit = async(e: React.FormEvent<HTMLDivElement>) => {
         } else {
             console.log('Stripe.js has not loaded yet.');
         }
-
+  
         } catch (error) {
             console.error('Error:', error);
-            alert('Error processing payment. Please try again.');
-        }
-    }
+            alert('Error processing payment. Please try again.'); 
+        } 
+      }
   };
 
 
@@ -121,7 +124,7 @@ const handleSubmit = async(e: React.FormEvent<HTMLDivElement>) => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <div onClick={handleSubmit}className="w-full text-center bg-[#38b6ff] text-white px-4 py-3 mt-2 rounded-md hover:bg-blue-300 focus:outline-none focus:bg-indigo-700">
+                  <div onClick={handleSubmit} className="w-full text-center bg-[#38b6ff] text-white px-4 py-3 mt-2 rounded-md hover:bg-blue-300 focus:outline-none focus:bg-indigo-700">
                     Send Message
                   </div>
                 </a>
