@@ -1,5 +1,6 @@
 import React from 'react';
 import { BsHouseHeart } from "react-icons/bs";
+import Link from 'next/link';
 
 const Navbar: React.FC = () => {
   return (
@@ -8,10 +9,10 @@ const Navbar: React.FC = () => {
         <div className="flex h-full items-center">
           {/* Logo and name */}
           <span className="mr-6 flex flex-row">
-            <a href="#" className="flex items-center py-5 pl-4">
+            <Link href="/" className="flex items-center py-5 pl-4">
               <BsHouseHeart className="text-violet-400 w-7 h-7"/>
               <span className="font-bold text-3xl text-violet-400 pl-2">Campus Cards</span>
-            </a>
+            </Link>
           </span>
 
           {/* Placeholder for the rest of the navbar content */}
