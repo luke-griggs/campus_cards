@@ -33,8 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }],
         metadata: { phoneNumber, message, docId },
         mode: 'payment',
-        success_url: 'http://localhost:3001/success', //campuscards.com/success
-        cancel_url: 'https://localhost:3001/cancel', //campuscards.com/cancel
+        success_url: 'https://campuscards.com.co/success', //campuscards.com/success
+        cancel_url: 'https://campuscards.com.co/cancel', //campuscards.com/cancel
       });
 
       res.status(200).json({ id: session.id });
